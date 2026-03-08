@@ -1,5 +1,5 @@
 services:
-  - type: worker
+  - type: web
     name: bot-gel
     runtime: python
     plan: free
@@ -12,3 +12,5 @@ services:
         sync: false
       - key: GOOGLE_SHEET_NAME
         value: Database-GEL-Teste
+      - key: PORT
+        value: 10000

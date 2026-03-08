@@ -6,6 +6,8 @@ import random
 import os
 import json
 import base64
+from aiohttp import web
+import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -300,4 +302,29 @@ discord_token = os.getenv("DISCORD_TOKEN")
 if not discord_token:
     raise RuntimeError("Defina a variavel de ambiente DISCORD_TOKEN antes de iniciar o bot.")
 
-bot.run(discord_token)
+# Servidor web para health check do Render
+async def health_check(request):
+    return web.Response(text="Bot está rodando! ✅")
+
+async def run_web_server():
+    app = web.Application()
+    app.router.add_get("/", health_check)
+    app.router.add_get("/health", health_check)
+    
+    port = int(os.getenv("PORT", 8080))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    print(f"🌐 Servidor web rodando na porta {port}")
+
+async def main():
+    # Inicia o servidor web
+    await run_web_server()
+    
+    # Inicia o bot
+    async with bot:
+        await bot.start(discord_token)
+
+if __name__ == "__main__":
+    asyncio.run(main())
