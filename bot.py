@@ -5,6 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import random
 import os
 import json
+import base64
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -21,6 +22,7 @@ scope = [
 ]
 
 google_credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+google_credentials_base64 = os.getenv("GOOGLE_CREDENTIALS_BASE64")
 google_credentials_file = os.getenv(
     "GOOGLE_CREDENTIALS_FILE",
     "mimetic-scion-489519-s2-2caca6f1d60b.json"
@@ -30,9 +32,19 @@ if google_credentials_json:
     creds = ServiceAccountCredentials.from_json_keyfile_dict(
         json.loads(google_credentials_json), scope
     )
-else:
+elif google_credentials_base64:
+    decoded_json = base64.b64decode(google_credentials_base64).decode("utf-8")
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(
+        json.loads(decoded_json), scope
+    )
+elif os.path.exists(google_credentials_file):
     creds = ServiceAccountCredentials.from_json_keyfile_name(
         google_credentials_file, scope
+    )
+else:
+    raise RuntimeError(
+        "Credenciais do Google ausentes. Defina GOOGLE_CREDENTIALS_JSON "
+        "(ou GOOGLE_CREDENTIALS_BASE64) no ambiente de deploy."
     )
 
 client = gspread.authorize(creds)

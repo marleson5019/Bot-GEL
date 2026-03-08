@@ -15,6 +15,7 @@ pip install -r requirements.txt
 
 - `DISCORD_TOKEN`
 - `GOOGLE_CREDENTIALS_JSON` (JSON completo da service account em uma linha)
+- `GOOGLE_CREDENTIALS_BASE64` (opcional, mesma credencial em Base64)
 - `GOOGLE_SHEET_NAME` (opcional, padrao `Database-GEL-Teste`)
 
 4. Inicie:
@@ -30,7 +31,7 @@ Este repositorio inclui `render.yaml` para criar um Worker Service no Render.
 Variaveis obrigatorias no Render:
 
 - `DISCORD_TOKEN`
-- `GOOGLE_CREDENTIALS_JSON`
+- `GOOGLE_CREDENTIALS_JSON` (ou `GOOGLE_CREDENTIALS_BASE64`)
 
 Variavel opcional:
 
